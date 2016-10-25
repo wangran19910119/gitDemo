@@ -1,0 +1,459 @@
+18964929118
+13440010001
+123456
+
+
+-----渡海乌鸦
+set @aa='';
+set @bb='';
+select @bb:='310112000000';
+select @aa:=(select REPLACE(GROUP_CONCAT(id),',','+')  from healthcloud_basic.app_tb_person_info2_field_rule where field_id=1 and id<>'personid' and county=@bb );
+set @q=concat('select personid,county,',@aa,' from healthcloud_basic.v_person_info2  where  ',@aa,'>10 and county=','''',@bb,'''',';');
+PREPARE stmt FROM @q;
+EXECUTE stmt;
+
+set @aa='';
+
+set @bb='';
+
+select @bb:='310112000000';
+
+select @aa:=(select REPLACE(GROUP_CONCAT(column_name),',','+')  from (select county,column_name from app_tb_person_info2_field_rule a INNER JOIN app_tb_person_info2_field_dic b on a.field_id=b.field_id where table_name='app_tb_person_info2') s where column_name not in ('personid') and county=@bb );
+
+set @q=concat('select personid,county,record_date,',@aa,' from healthcloud_famdoc.v_person_info2 where  ',@aa,'>10 and county=','''',@bb,'''',';');
+
+PREPARE stmt FROM @q;
+
+EXECUTE stmt;
+
+set @aa='';
+set @bb='';
+select @bb:='310112000000';
+select @aa:=(select REPLACE(GROUP_CONCAT(column_name),',','+')  from (select county,column_name from healthcloud_basic.app_tb_person_info2_field_rule a INNER JOIN healthcloud_basic.app_tb_person_info2_field_dic b on a.field_id=b.field_id where table_name='app_tb_person_info2') s where column_name not in ('personid') and county=@bb);
+set @q=concat('select count(*) total from(select personid,county,record_date,org,docid,',@aa,' as blank_num from healthcloud_famdoc.v_person_info2 where  ',@aa,'>0 and county=','''',@bb,'''',')as c;');
+PREPARE stmt FROM @q;
+EXECUTE stmt;
+
+
+
+
+select count(personid) specificationCount,personid,county,record_date,org,docid,
+abo_btype+address_city+address_committee+address_county+address_province+address_town+birth+cardid+card_type+company_address+company_name+company_zcode+contact_address+contact_company+contact_name+contact_relate+contact_tel+contact_zcode+education+employ_situation+gender+insurance_id+insurance_type+ispermament_address+marriage+medical_paymentcode+mobile_phone+name+nation+nation_other+personcard_no+personcard_type+phone+profession+residence_id+resident_recordid+rh_btype+student_id
+as blank_num from healthcloud_famdoc.v_person_info2 where  abo_btype+address_city+address_committee+address_county+address_province+address_town+birth+cardid+card_type+company_address+company_name+company_zcode+contact_address+contact_company+contact_name+contact_relate+contact_tel+contact_zcode+education+employ_situation+gender+insurance_id+insurance_type+ispermament_address+marriage+medical_paymentcode+mobile_phone+name+nation+nation_other+personcard_no+personcard_type+phone+profession+residence_id+resident_recordid+rh_btype+student_id
+>=0 and county='310112000000' group by org
+
+
+---------------
+set @aa='';
+
+set @bb='';
+
+select @bb:='310106000000';
+
+select @aa:=(select REPLACE(GROUP_CONCAT(column_name),',','+')  from (select county,column_name from healthcloud_basic.app_tb_person_info2_field_rule a INNER JOIN healthcloud_basic.app_tb_person_info2_field_dic b on a.field_id=b.field_id where table_name='app_tb_person_info2') s where column_name not in ('personid') and county=@bb );
+
+set @q=concat('select personid,county,record_date,',@aa,' from healthcloud_famdoc.v_person_info2 where  ',@aa,'>10 and county=','''',@bb,'''',';');
+
+PREPARE stmt FROM @q;
+
+EXECUTE stmt;
+
+
+
+
+select  a.*,u.name,u.no from (select personid,county,record_date,org,docid,
+abo_btype+address_city+address_committee+address_county+address_province+address_town+birth+drinkwater_type+education+fuel_type+gender+kitchen_type+marriage+name+nation+paddress_city+paddress_committee+paddress_county+paddress_province+paddress_town+personcard_no+personcard_type+rh_btype+sign_disability+sign_exposure+sign_pasthistory
+from healthcloud_famdoc.v_person_info2 where  
+abo_btype+address_city+address_committee+address_county+address_province+address_town+birth+drinkwater_type+education+fuel_type+gender+kitchen_type+marriage+name+nation+paddress_city+paddress_committee+paddress_county+paddress_province+paddress_town+personcard_no+personcard_type+rh_btype+sign_disability+sign_exposure+sign_pasthistory
+>=0 and county='310106000000')  a left join healthcloud_doc. sys_user u on docid=u.id 
+
+
+select  a.*,h.hospital_name from (select personid,county,record_date,org,docid,
+abo_btype+address_city+address_committee+address_county+address_province+address_town+birth+drinkwater_type+education+fuel_type+gender+kitchen_type+marriage+name+nation+paddress_city+paddress_committee+paddress_county+paddress_province+paddress_town+personcard_no+personcard_type+rh_btype+sign_disability+sign_exposure+sign_pasthistory
+from healthcloud_famdoc.v_person_info2 where  
+abo_btype+address_city+address_committee+address_county+address_province+address_town+birth+drinkwater_type+education+fuel_type+gender+kitchen_type+marriage+name+nation+paddress_city+paddress_committee+paddress_county+paddress_province+paddress_town+personcard_no+personcard_type+rh_btype+sign_disability+sign_exposure+sign_pasthistory
+>=0 and county='310106000000')  a left join healthcloud_doc.t_dic_hospital_info h on org=h.hospital_id 
+
+
+
+
+-Xms256m -Xmx256m -XX:MaxNewSize=256m -XX:MaxPermSize=256m
+
+
+1.医生姓名
+2.医生工号
+3.社区名称
+4.团队名称
+
+
+
+
+
+
+
+
+
+SELECT
+      count(1) AS specificationCount,
+      SUM(CASE WHEN black_num=0 THEN 1 ELSE 0 END) AS specificationNumber,
+    	a.org,
+      d.hospital_name AS communityName,
+      SUM(CASE WHEN black_num>0  THEN 1 ELSE 0 END) AS noSpecificationNumber,
+      SUM(CASE WHEN black_num<=5 AND black_num>0 THEN 1 ELSE 0 END) AS lack5Number,
+      SUM(CASE WHEN black_num>5 AND black_num<=10 THEN 1 ELSE 0 END) AS lack510Number,
+      SUM(CASE WHEN black_num>10 THEN 1 ELSE 0 END) AS lack10Number
+FROM
+(
+SELECT
+		county,
+    org,
+    docid,
+		abo_btype + address_city + address_committee + address_county + address_province + address_town + birth + drinkwater_type + education + fuel_type + gender + kitchen_type + marriage + NAME + nation + paddress_city + paddress_committee + paddress_county + paddress_province + paddress_town + personcard_no + personcard_type + rh_btype + sign_disability + sign_exposure + sign_pasthistory AS black_num
+		FROM
+			healthcloud_famdoc.v_person_info2 
+    where org='42484500700' and county='310106000000'
+		)a
+-- INNER JOIN healthcloud_famdoc.fam_team_constitute  b ON a.docid=b.member_id
+-- INNER JOIN healthcloud_famdoc.fam_team c ON b.team_id=c.teamid
+INNER JOIN healthcloud_doc.t_dic_hospital_info d ON a.org=d.hospital_id
+-- INNER JOIN healthcloud_doc.sys_user e ON a.docid=e.register_id
+where 
+ d.del_flag='0'
+
+GROUP BY a.org,d.hospital_name;
+
+
+
+
+
+
+
+
+
+
+
+SELECT
+      count(1) AS specificationCount,
+      SUM(CASE WHEN black_num=0 THEN 1 ELSE 0 END) AS specificationNumber,
+    	a.org,
+      d.hospital_name AS communityName,
+      SUM(CASE WHEN black_num>0  THEN 1 ELSE 0 END) AS noSpecificationNumber,
+      SUM(CASE WHEN black_num<=5 AND black_num>0 THEN 1 ELSE 0 END) AS lack5Number,
+      SUM(CASE WHEN black_num>5 AND black_num<=10 THEN 1 ELSE 0 END) AS lack510Number,
+      SUM(CASE WHEN black_num>10 THEN 1 ELSE 0 END) AS lack10Number
+FROM
+(
+SELECT
+		county,
+    org,
+    docid,
+    record_date,
+		abo_btype + address_city + address_committee + address_county + address_province + address_town + birth + drinkwater_type + education + fuel_type + gender + kitchen_type + marriage + NAME + nation + paddress_city + paddress_committee + paddress_county + paddress_province + paddress_town + personcard_no + personcard_type + rh_btype + sign_disability + sign_exposure + sign_pasthistory AS black_num
+		FROM
+		healthcloud_famdoc.v_person_info2 
+    where org='42484500700' and county='310106000000' and year(record_date)='2016'
+		)a
+-- INNER JOIN healthcloud_famdoc.fam_team_constitute  b ON a.docid=b.member_id
+-- INNER JOIN healthcloud_famdoc.fam_team c ON b.team_id=c.teamid
+INNER JOIN healthcloud_doc.t_dic_hospital_info d ON a.org=d.hospital_id
+-- INNER JOIN healthcloud_doc.sys_user e ON a.docid=e.register_id
+where 
+ d.del_flag='0'
+
+GROUP BY a.org,d.hospital_name;
+
+
+
+
+
+
+
+
+
+
+-- 区用户下面的所有社区
+SELECT
+      SUM(CASE WHEN black_num>=0 IS NOT NULL THEN 1 ELSE 0 END) AS specificationCount,
+      SUM(CASE WHEN b.black_num=0 THEN 1 ELSE 0 END) AS specificationNumber,
+    	b.org,
+      b.county,
+      a.hospital_name AS communityName,
+    --  SUM(CASE WHEN black_num=0  THEN 1 ELSE 0 END) AS noSpecificationNumber,
+      SUM(CASE WHEN black_num<=5 AND black_num>0 THEN 1 ELSE 0 END) AS lack5Number,
+      SUM(CASE WHEN black_num>5 AND black_num<=10 THEN 1 ELSE 0 END) AS lack510Number,
+      SUM(CASE WHEN black_num>10 THEN 1 ELSE 0 END) AS lack10Number
+FROM  (SELECT hospital_id,hospital_name from healthcloud_doc.t_dic_hospital_info  where hospital_level='01' and hospital_type='B1' AND address_county='310106000000' AND del_flag='0') a 
+left JOIN
+(
+SELECT
+		county,
+    org,
+    docid,
+    record_date,
+		abo_btype + address_city + address_committee + address_county + address_province + address_town + birth + drinkwater_type + education + fuel_type + gender + kitchen_type + marriage + NAME + nation + paddress_city + paddress_committee + paddress_county + paddress_province + paddress_town + personcard_no + personcard_type + rh_btype + sign_disability + sign_exposure + sign_pasthistory AS black_num
+		FROM
+		healthcloud_famdoc.v_person_info2 
+		)b ON a.hospital_id=b.org 
+GROUP BY b.org,a.hospital_name;
+
+
+----------社区下面的所有团队
+
+SELECT
+      SUM(CASE WHEN black_num>=0 IS NOT NULL THEN 1 ELSE 0 END) AS specificationCount,
+      SUM(CASE WHEN b.black_num=0 THEN 1 ELSE 0 END) AS specificationNumber,
+      a.teamid,
+      a.team_name,
+      -- SUM(CASE WHEN black_num=0  THEN 1 ELSE 0 END) AS noSpecificationNumber,
+      SUM(CASE WHEN black_num<=5 AND black_num>0 THEN 1 ELSE 0 END) AS lack5Number,
+      SUM(CASE WHEN black_num>5 AND black_num<=10 THEN 1 ELSE 0 END) AS lack510Number,
+      SUM(CASE WHEN black_num>10 THEN 1 ELSE 0 END) AS lack10Number
+FROM  (SELECT t1.team_name,t1.teamid,t2.member_id from healthcloud_famdoc.fam_team  t1 INNER JOIN healthcloud_famdoc.fam_team_constitute t2  ON t1.teamid=t2.team_id where t1.del_flag='0' AND t2.del_flag='0' AND t1.manageorg='42484500700') a 
+LEFT JOIN
+(
+SELECT
+		county,
+    org,
+    docid,
+    record_date,
+		abo_btype + address_city + address_committee + address_county + address_province + address_town + birth + drinkwater_type + education + fuel_type + gender + kitchen_type + marriage + NAME + nation + paddress_city + paddress_committee + paddress_county + paddress_province + paddress_town + personcard_no + personcard_type + rh_btype + sign_disability + sign_exposure + sign_pasthistory AS black_num
+		FROM
+		healthcloud_famdoc.v_person_info2 
+		)b ON a.member_id=b.docid and b.county='310106000000'
+GROUP BY a.teamid,a.team_name;
+)
+
+---------------------------社区下面的所有医生
+SELECT
+      SUM(CASE WHEN black_num>=0 IS NOT NULL THEN 1 ELSE 0 END) AS specificationCount,
+      SUM(CASE WHEN b.black_num=0 THEN 1 ELSE 0 END) AS specificationNumber,
+      a.register_id,
+      a.name,
+      a.no,
+      -- SUM(CASE WHEN black_num=0  THEN 1 ELSE 0 END) AS noSpecificationNumber,
+      SUM(CASE WHEN black_num<=5 AND black_num>0 THEN 1 ELSE 0 END) AS lack5Number,
+      SUM(CASE WHEN black_num>5 AND black_num<=10 THEN 1 ELSE 0 END) AS lack510Number,
+      SUM(CASE WHEN black_num>10 THEN 1 ELSE 0 END) AS lack10Number
+FROM  (SELECT register_id,name,no from  healthcloud_doc.sys_user where del_flag='0' AND hospital_id='42484500700') a 
+LEFT JOIN
+(
+SELECT
+		county,
+    org,
+    docid,
+    record_date,
+		abo_btype + address_city + address_committee + address_county + address_province + address_town + birth + drinkwater_type + education + fuel_type + gender + kitchen_type + marriage + NAME + nation + paddress_city + paddress_committee + paddress_county + paddress_province + paddress_town + personcard_no + personcard_type + rh_btype + sign_disability + sign_exposure + sign_pasthistory AS black_num
+		FROM
+		healthcloud_famdoc.v_person_info2 
+		)b ON a.register_id=b.docid and b.county='310106000000'
+GROUP BY a.register_id,a.`name`,a.`no`;
+
+
+
+                                    ---团队下面的所有医生
+SELECT
+      SUM(CASE WHEN black_num>=0 IS NOT NULL THEN 1 ELSE 0 END) AS specificationCount,
+      SUM(CASE WHEN b.black_num=0 THEN 1 ELSE 0 END) AS specificationNumber,
+      a.member_id,
+      a.name,
+      a.no,
+      -- SUM(CASE WHEN black_num=0  THEN 1 ELSE 0 END) AS noSpecificationNumber,
+      SUM(CASE WHEN black_num<=5 AND black_num>0 THEN 1 ELSE 0 END) AS lack5Number,
+      SUM(CASE WHEN black_num>5 AND black_num<=10 THEN 1 ELSE 0 END) AS lack510Number,
+      SUM(CASE WHEN black_num>10 THEN 1 ELSE 0 END) AS lack10Number
+FROM  (SELECT t1.member_id,t2.`name`,t2.`no` from  healthcloud_famdoc.fam_team_constitute t1 INNER JOIN healthcloud_doc.sys_user t2 ON t1.member_id=t2.register_id where t1.del_flag='0' AND t2.del_flag='0' AND t1.team_id='0d5254a98eab4e1390ec528f98ba0b00') a 
+LEFT JOIN
+(
+SELECT
+		county,
+    org,
+    docid,
+    record_date,
+		abo_btype + address_city + address_committee + address_county + address_province + address_town + birth + drinkwater_type + education + fuel_type + gender + kitchen_type + marriage + NAME + nation + paddress_city + paddress_committee + paddress_county + paddress_province + paddress_town + personcard_no + personcard_type + rh_btype + sign_disability + sign_exposure + sign_pasthistory AS black_num
+		FROM
+		healthcloud_famdoc.v_person_info2 
+		)b ON a.member_id=b.docid 
+GROUP BY a.member_id,a.`name`,a.`no`;
+)
+
+
+
+
+----------------------某个区下面所以团队每个月份规范建档总数
+SELECT
+      SUM(CASE WHEN b.black_num=0 THEN 1 ELSE 0 END) AS specificationNumber,
+      date_format(b.record_date,'%Y-%m') AS recordDate,
+      a.hospital_name AS communityName
+FROM  (SELECT hospital_id,hospital_name from healthcloud_doc.t_dic_hospital_info  where hospital_level='01' and hospital_type='B1' AND address_county='310106000000' AND del_flag='0') a 
+left JOIN
+(
+SELECT
+		county,
+    org,
+    docid,
+    record_date,
+		abo_btype + address_city + address_committee + address_county + address_province + address_town + birth + drinkwater_type + education + fuel_type + gender + kitchen_type + marriage + NAME + nation + paddress_city + paddress_committee + paddress_county + paddress_province + paddress_town + personcard_no + personcard_type + rh_btype + sign_disability + sign_exposure + sign_pasthistory AS black_num
+		FROM
+		healthcloud_famdoc.v_person_info2
+ 
+		)b ON a.hospital_id=b.org 
+GROUP BY date_format(b.record_date,'%Y-%m') asc;
+
+
+
+----------------------某个社区下面所以医生每个月份规范建档总数
+SELECT
+      SUM(CASE WHEN b.black_num=0 THEN 1 ELSE 0 END) AS specificationNumber,
+      date_format(b.record_date,'%Y-%m') AS recordDate
+FROM  (SELECT register_id,name from  healthcloud_doc.sys_user where del_flag='0' AND hospital_id='42484500700') a 
+LEFT JOIN
+(
+SELECT
+		county,
+    org,
+    docid,
+    record_date,
+		abo_btype + address_city + address_committee + address_county + address_province + address_town + birth + drinkwater_type + education + fuel_type + gender + kitchen_type + marriage + NAME + nation + paddress_city + paddress_committee + paddress_county + paddress_province + paddress_town + personcard_no + personcard_type + rh_btype + sign_disability + sign_exposure + sign_pasthistory AS black_num
+		FROM
+		healthcloud_famdoc.v_person_info2 
+		)b ON a.register_id=b.docid 
+GROUP BY date_format(b.record_date,'%Y-%m') asc;
+
+
+
+
+
+
+
+
+
+
+
+select a.org,
+      SUM(CASE WHEN black_num>=0  THEN 1 ELSE 0 END) AS specificationCount,
+      SUM(CASE WHEN black_num=0 THEN 1 ELSE 0 END) AS specificationNumber,
+      SUM(CASE WHEN black_num<=5 AND black_num>0 THEN 1 ELSE 0 END) AS lack5Number,
+      SUM(CASE WHEN black_num>5 AND black_num<=10 THEN 1 ELSE 0 END) AS lack510Number,
+      SUM(CASE WHEN black_num>10 THEN 1 ELSE 0 END) AS lack10Number
+,b.hospital_name
+from 
+stat_person_info2 a inner join healthcloud_doc.t_dic_hospital_info b on a.org=b.hospital_id
+where hospital_level='01' and hospital_type='B1' AND address_county='310106000000' AND del_flag='0'
+group by a.org,b.hospital_name
+;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------区下面的所有社区
+select a.org,
+      SUM(CASE WHEN black_num>=0  THEN 1 ELSE 0 END) AS specificationCount,
+      SUM(CASE WHEN black_num=0 THEN 1 ELSE 0 END) AS specificationNumber,
+      SUM(CASE WHEN black_num<=5 AND black_num>0 THEN 1 ELSE 0 END) AS lack5Number,
+      SUM(CASE WHEN black_num>5 AND black_num<=10 THEN 1 ELSE 0 END) AS lack510Number,
+      SUM(CASE WHEN black_num>10 THEN 1 ELSE 0 END) AS lack10Number
+,b.hospital_short 
+from 
+stat_person_info2 a inner join healthcloud_doc.t_dic_hospital_info b on a.org=b.hospital_id
+where hospital_level='01' and hospital_type='B1' AND address_county='310106000000' AND del_flag='0'
+group by a.org,b.hospital_short
+
+
+----------------------------首页
+select a.org,
+      SUM(CASE WHEN black_num>=0  THEN 1 ELSE 0 END) AS specificationCount,
+      SUM(CASE WHEN black_num=0 THEN 1 ELSE 0 END) AS specificationNumber,
+      SUM(CASE WHEN black_num<=5 AND black_num>0 THEN 1 ELSE 0 END) AS lack5Number,
+      SUM(CASE WHEN black_num>5 AND black_num<=10 THEN 1 ELSE 0 END) AS lack510Number,
+      SUM(CASE WHEN black_num>10 THEN 1 ELSE 0 END) AS lack10Number
+from 
+stat_person_info2 a right join healthcloud_doc.t_dic_hospital_info b on a.org=b.hospital_id
+where hospital_level='01' and hospital_type='B1' AND address_county='310106000000' AND del_flag='0'
+group by a.org
+;
+
+
+
+------近三个月完善建档数
+select 
+      
+      SUM(CASE WHEN black_num=0 THEN 1 ELSE 0 END) AS specificationNumber
+,date_format(a.record_date,'%Y-%m')
+from 
+stat_person_info2 a right join healthcloud_doc.t_dic_hospital_info b on a.org=b.hospital_id
+where hospital_level='01' and hospital_type='B1' AND address_county='310106000000' AND del_flag='0'
+and date_format(a.record_date,'%Y-%m')>date_format(SUBDATE(CURDATE(),INTERVAL 3 month),'%Y-%m')
+group by date_format(a.record_date,'%Y-%m')
+;
+
+
+------
+
+
+
+
+----- --------社区下面的所有团队
+
+SELECT
+      IFNULL(sum(b.specificationCount),0) AS specificationCount,
+      IFNULL(sum(b.specificationNumber),0) AS specificationNumber,
+      a.teamid,
+      a.team_name AS communityName,
+      IFNULL(sum(b.lack5Number),0) AS lack5Number,
+      IFNULL(sum(b.lack510Number),0) AS lack510Number,
+      IFNULL(sum(b.lack10Number),0) AS lack10Number
+FROM  (SELECT t1.team_name,t1.teamid,t2.member_id from healthcloud_famdoc.fam_team  t1 INNER JOIN healthcloud_famdoc.fam_team_constitute t2  ON t1.teamid=t2.team_id where t1.del_flag='0' AND t2.del_flag='0' AND t1.manageorg='42484500700') a 
+LEFT JOIN
+(
+SELECT
+    docid,
+	  SUM(CASE WHEN black_num>=0 THEN 1 ELSE 0 END) AS specificationCount,
+      SUM(CASE WHEN black_num=0 THEN 1 ELSE 0 END) AS specificationNumber,
+      SUM(CASE WHEN black_num<=5 AND black_num>0 THEN 1 ELSE 0 END) AS lack5Number,
+      SUM(CASE WHEN black_num>5 AND black_num<=10 THEN 1 ELSE 0 END) AS lack510Number,
+      SUM(CASE WHEN black_num>10 THEN 1 ELSE 0 END) AS lack10Number
+		FROM
+		healthcloud_famdoc.stat_person_info2
+			GROUP BY docid
+		) b ON a.member_id=b.docid 
+GROUP BY a.teamid;
+)
+
+
+
+
+
